@@ -8,16 +8,21 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 /**
- * Created by eliseomartelli on 25/04/16.
+ * Made by DeveloperOfCydonia
+ * --------------------------
+ * Eliseo Martelli
+ * Matteo Lobello
  */
 public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestureListener {
 
 
     private OnForceTouchListener mListener;
     private View mView;
+    private boolean mIsPeeking = false;
     public static final int LONG_PRESS_THRESHOLD = ViewConfiguration.getLongPressTimeout();
     private MotionEvent mLastMotionEvent;
     private float mComputedPressureThreshold;
+    private int mSensibility = Sensibility.MEDIUM;
 
     GestureDetectorCompat mGestureDetector;
 
@@ -25,18 +30,27 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     private final Runnable mPeekRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mLastMotionEvent.getPressure() <= mComputedPressureThreshold) {
+            if (!mIsPeeking && mLastMotionEvent.getPressure() <= mComputedPressureThreshold) {
+                mIsPeeking = true;
                 mListener.onPeek(mView, mLastMotionEvent);
             }
         }
     };
 
-    /**
-     *
-     * @param v
-     * @param listener
-     */
-    public FreeDTouch(View v, OnForceTouchListener listener) {
+    public static FreeDTouch add(View v, OnForceTouchListener listener) {
+        return new FreeDTouch(v, listener);
+    }
+
+    public static FreeDTouch add(View v, OnForceTouchListener listener, int sensibility) {
+        return new FreeDTouch(v, listener, sensibility);
+    }
+
+    private FreeDTouch(View v, OnForceTouchListener listener, int sensibility) {
+        new FreeDTouch(v, listener);
+        mSensibility = sensibility;
+    }
+
+    private FreeDTouch(View v, OnForceTouchListener listener) {
         if (listener != null) {
             mListener = listener;
         } else {
@@ -57,9 +71,24 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         mLastMotionEvent = event;
-        mComputedPressureThreshold = getComputedPressureThreshold(event.getPressure(), Sensibility.LOW);
-        //TODO: Check for POP
-        //TODO: Check for PEEK
+        if (!mIsPeeking) {
+            mComputedPressureThreshold =
+                    getComputedPressureThreshold(event.getPressure(), mSensibility);
+        } else {
+            mPeekHandler.removeCallbacks(mPeekRunnable);
+            if (event.getPressure() >= mComputedPressureThreshold) {
+                mIsPeeking = false;
+                mListener.onPop(v, event);
+            }
+
+            if (event.getAction() == MotionEvent.ACTION_UP ||
+                event.getAction() == MotionEvent.ACTION_CANCEL) {
+                mIsPeeking = false;
+                mPeekHandler.removeCallbacks(mPeekRunnable);
+                mListener.onCancel(mView, event);
+            }
+        }
+
         return mGestureDetector.onTouchEvent(event);
     }
 
@@ -92,13 +121,20 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         mPeekHandler.removeCallbacks(mPeekRunnable);
-        mListener.onClick(mView, e);
+        if (!mIsPeeking) {
+            mListener.onClick(mView, e);
+        }
         return true;
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         mPeekHandler.removeCallbacks(mPeekRunnable);
+        if (!mIsPeeking) {
+            return false;
+        }
+        mIsPeeking = false;
+        mListener.onCancel(mView, e1);
         return true;
     }
 
@@ -110,6 +146,9 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         mPeekHandler.removeCallbacks(mPeekRunnable);
+        if (mIsPeeking) {
+            mListener.onCancel(mView, e1);
+        }
         return false;
     }
 
@@ -121,6 +160,8 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     }
 
     public class Sensibility {
-        public static final int LOW = 30;
+        public static final int HIGH = 10;
+        public static final int MEDIUM = 15;
+        public static final int LOW = 20;
     }
 }

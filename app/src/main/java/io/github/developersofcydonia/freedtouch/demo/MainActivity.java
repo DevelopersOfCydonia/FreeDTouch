@@ -1,5 +1,6 @@
 package io.github.developersofcydonia.freedtouch.demo;
 
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,18 +21,24 @@ public class MainActivity extends AppCompatActivity implements FreeDTouch.OnForc
         setContentView(R.layout.activity_main);
 
         Button mButton = (Button) findViewById(R.id.button);
-        new FreeDTouch(mButton, this);
+
+        FreeDTouch.add(mButton, this);
 
     }
 
     @Override
     public void onPeek(View v, MotionEvent e) {
         Log.d(TAG, "onPeek");
+        Toast.makeText(MainActivity.this, "PEEK", Toast.LENGTH_SHORT).show();
+        ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
     }
 
     @Override
     public void onPop(View v, MotionEvent e) {
         Log.d(TAG, "onPop");
+        Toast.makeText(MainActivity.this, "POP", Toast.LENGTH_SHORT).show();
+        ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
+
     }
 
     @Override
@@ -43,5 +50,6 @@ public class MainActivity extends AppCompatActivity implements FreeDTouch.OnForc
     @Override
     public void onCancel(View v, MotionEvent e) {
         Log.d(TAG, "onCancel");
+        Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
     }
 }
