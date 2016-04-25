@@ -1,20 +1,35 @@
 package io.github.developersofcydonia.freedtouch;
 
+import android.os.Handler;
+import android.support.v4.view.GestureDetectorCompat;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import java.util.Calendar;
-
 /**
  * Created by eliseomartelli on 25/04/16.
  */
-public class FreeDTouch implements View.OnTouchListener {
+public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestureListener {
 
 
     private OnForceTouchListener mListener;
     private View mView;
     public static final int LONG_PRESS_THRESHOLD = ViewConfiguration.getLongPressTimeout();
+    private MotionEvent mLastMotionEvent;
+    private float mComputedPressureThreshold;
+
+    GestureDetectorCompat mGestureDetector;
+
+    private final Handler mPeekHandler = new Handler();
+    private final Runnable mPeekRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mLastMotionEvent.getPressure() <= mComputedPressureThreshold) {
+                mListener.onPeek(mView, mLastMotionEvent);
+            }
+        }
+    };
 
     /**
      *
@@ -31,34 +46,21 @@ public class FreeDTouch implements View.OnTouchListener {
             mView = v;
             v.setClickable(true);
             v.setOnTouchListener(this);
+            mGestureDetector = new GestureDetectorCompat(v.getContext(), this);
         }
-
     }
 
-    long startTime = 0;
+    private float getComputedPressureThreshold(float pressure, int sensibility) {
+        return ((float)sensibility/100*pressure) + pressure;
+    }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                startTime = Calendar.getInstance().getTimeInMillis();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
-                long duration = Calendar.getInstance().getTimeInMillis() - startTime;
-                if (duration < LONG_PRESS_THRESHOLD) {
-                    mListener.onClick(v, event);
-                } else {
-                    mListener.onCancel(v, event);
-                }
-                break;
-        }
-
+        mLastMotionEvent = event;
+        mComputedPressureThreshold = getComputedPressureThreshold(event.getPressure(), Sensibility.LOW);
         //TODO: Check for POP
         //TODO: Check for PEEK
-
-        return true;
+        return mGestureDetector.onTouchEvent(event);
     }
 
     /*
@@ -75,10 +77,50 @@ public class FreeDTouch implements View.OnTouchListener {
         public void onCancel(View v, MotionEvent e) {}
     };
 
+    @Override
+    public boolean onDown(MotionEvent e) {
+        mPeekHandler.removeCallbacks(mPeekRunnable);
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+        mPeekHandler.removeCallbacks(mPeekRunnable);
+        mPeekHandler.postDelayed(mPeekRunnable, LONG_PRESS_THRESHOLD);
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        mPeekHandler.removeCallbacks(mPeekRunnable);
+        mListener.onClick(mView, e);
+        return true;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        mPeekHandler.removeCallbacks(mPeekRunnable);
+        return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        mPeekHandler.removeCallbacks(mPeekRunnable);
+        return false;
+    }
+
     public interface OnForceTouchListener {
         void onPeek(View v, MotionEvent e);
         void onPop(View v, MotionEvent e);
         void onClick(View v, MotionEvent e);
         void onCancel(View v, MotionEvent e);
+    }
+
+    public class Sensibility {
+        public static final int LOW = 30;
     }
 }
