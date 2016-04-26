@@ -22,10 +22,10 @@ public class MainActivity extends AppCompatActivity implements FreeDTouch.OnForc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button mButton = (Button) findViewById(R.id.button);
+        Button button = (Button) findViewById(R.id.button);
         View popupContainer = findViewById(R.id.popup_container);
 
-        FreeDTouch.setup(mButton, this)
+        FreeDTouch.setup(button, this)
                 .addPopup(popupContainer, POPUP_LAYOUT_RES)
                 .start();
     }
