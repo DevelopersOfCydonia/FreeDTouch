@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FreeDTouch</string>
+    <string name="title_activity_pop">PopActivity</string>
 </resources>

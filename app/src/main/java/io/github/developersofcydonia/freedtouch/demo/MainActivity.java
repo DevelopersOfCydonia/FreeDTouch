@@ -1,5 +1,6 @@
 package io.github.developersofcydonia.freedtouch.demo;
 
+import android.content.Intent;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements FreeDTouch.OnForc
     public void onPop(View popup, View v, MotionEvent e) {
         Log.d(TAG, "onPop");
         Toast.makeText(MainActivity.this, "POP", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(MainActivity.this, PopActivity.class));
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
     }
 
