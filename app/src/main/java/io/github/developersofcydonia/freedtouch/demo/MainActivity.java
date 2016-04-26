@@ -13,7 +13,9 @@ import io.github.developersofcydonia.freedtouch.FreeDTouch;
 
 public class MainActivity extends AppCompatActivity implements FreeDTouch.OnForceTouchListener {
 
-    public static final String TAG = MainActivity.class.getName();
+    private static final String TAG = MainActivity.class.getName();
+
+    private static final int POPUP_LAYOUT_RES = R.layout.popup_example;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,34 +23,35 @@ public class MainActivity extends AppCompatActivity implements FreeDTouch.OnForc
         setContentView(R.layout.activity_main);
 
         Button mButton = (Button) findViewById(R.id.button);
+        View popupContainer = findViewById(R.id.popup_container);
 
-        FreeDTouch.add(mButton, this);
-
+        FreeDTouch.setup(mButton, this)
+                .addPopup(popupContainer, POPUP_LAYOUT_RES)
+                .start();
     }
 
     @Override
-    public void onPeek(View v, MotionEvent e) {
+    public void onPeek(View popup, View v, MotionEvent e) {
         Log.d(TAG, "onPeek");
         Toast.makeText(MainActivity.this, "PEEK", Toast.LENGTH_SHORT).show();
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
     }
 
     @Override
-    public void onPop(View v, MotionEvent e) {
+    public void onPop(View popup, View v, MotionEvent e) {
         Log.d(TAG, "onPop");
         Toast.makeText(MainActivity.this, "POP", Toast.LENGTH_SHORT).show();
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
-
     }
 
     @Override
-    public void onClick(View v, MotionEvent e) {
+    public void onClick(View popup, View v, MotionEvent e) {
         Log.d(TAG, "onClick");
         Toast.makeText(MainActivity.this, "Click", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onCancel(View v, MotionEvent e) {
+    public void onCancel(View popup, View v, MotionEvent e) {
         Log.d(TAG, "onCancel");
         Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
     }
