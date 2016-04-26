@@ -37,12 +37,24 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
         }
     };
 
-    public static FreeDTouch add(View v, OnForceTouchListener listener) {
-        return new FreeDTouch(v, listener);
+    /**
+     *
+     * @param view
+     * @param listener
+     */
+    public static FreeDTouch add(View view, OnForceTouchListener listener) {
+        return new FreeDTouch(view, listener);
     }
 
-    public static FreeDTouch add(View v, OnForceTouchListener listener, int sensibility) {
-        return new FreeDTouch(v, listener, sensibility);
+
+    /**
+     *
+     * @param view
+     * @param listener
+     * @param sensibility
+     */
+    public static FreeDTouch add(View view, OnForceTouchListener listener, int sensibility) {
+        return new FreeDTouch(view, listener, sensibility);
     }
 
     private FreeDTouch(View v, OnForceTouchListener listener, int sensibility) {
