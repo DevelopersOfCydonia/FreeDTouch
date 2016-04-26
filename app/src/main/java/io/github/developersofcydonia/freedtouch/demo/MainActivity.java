@@ -1,7 +1,11 @@
 package io.github.developersofcydonia.freedtouch.demo;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,44 +21,62 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int POPUP_LAYOUT_RES = R.layout.popup_example;
 
+    private static final String DIALOG_TAG = "dialog";
+
+
+    Button mButton, mButtonFragment;
+
     private FreeDTouch.OnForceTouchListener onForceTouchListener = new FreeDTouch.OnForceTouchListener() {
         @Override
         public void onPeek(View popup, View v, MotionEvent e) {
             Log.d(TAG, "onPeek");
-            Toast.makeText(MainActivity.this, "PEEK", Toast.LENGTH_SHORT).show();
             ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
+            if (mButtonFragment.equals(v)) {
+                new DialogTestFragment().show(getSupportFragmentManager(), DIALOG_TAG);
+            }
         }
 
         @Override
         public void onPop(View popup, View v, MotionEvent e) {
             Log.d(TAG, "onPop");
-            Toast.makeText(MainActivity.this, "POP", Toast.LENGTH_SHORT).show();
             ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
+            onClick(popup, v, e);
+            destroyDialog();
         }
 
         @Override
         public void onClick(View popup, View v, MotionEvent e) {
             Log.d(TAG, "onClick");
-            Toast.makeText(MainActivity.this, "Click", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this, PopActivity.class));
         }
 
         @Override
         public void onCancel(View popup, View v, MotionEvent e) {
             Log.d(TAG, "onCancel");
-            Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
+            destroyDialog();
         }
     };
+
+    public void destroyDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if (fragment instanceof DialogFragment) {
+            ((DialogTestFragment) fragment).dismiss();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.button);
+        mButton = (Button) findViewById(R.id.button);
+        mButtonFragment = (Button) findViewById(R.id.button_fragment);
         View popupContainer = findViewById(R.id.popup_container);
 
-        FreeDTouch.setup(button, onForceTouchListener)
+        FreeDTouch.setup(mButton, onForceTouchListener)
                 .addPopup(popupContainer, POPUP_LAYOUT_RES)
                 .start();
+
+        FreeDTouch.setup(mButtonFragment, onForceTouchListener).start();
     }
 }

@@ -5,18 +5,29 @@
     android:layout_height="match_parent"
     tools:context="io.github.developersofcydonia.freedtouch.demo.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/button"
+            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="PushMe" />
+            android:text="FreeDTouch Me (Popup)" />
 
-    </RelativeLayout>
+        <Button
+            android:id="@+id/button_fragment"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="FreeDTouch Me (Fragment)" />
+
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
