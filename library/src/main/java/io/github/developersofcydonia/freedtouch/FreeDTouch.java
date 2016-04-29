@@ -48,6 +48,7 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
 
     private MotionEvent mLastMotionEvent;
 
+    private float mComputedSurfaceThreshold;
     private float mComputedPressureThreshold;
     private int mSensibility;
 
@@ -59,7 +60,9 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     private final Runnable mPeekRunnable = new Runnable() {
         @Override
         public void run() {
-            if (!mIsPeeking && mLastMotionEvent.getPressure() <= mComputedPressureThreshold) {
+            if (!mIsPeeking &&
+                    (mLastMotionEvent.getPressure() <= mComputedPressureThreshold ||
+                     mLastMotionEvent.getSize() <= mComputedSurfaceThreshold)) {
                 mIsPeeking = true;
                 if (mPopupContainer != null) {
                     mPopup = LayoutInflater.from(mView.getContext())
@@ -125,11 +128,12 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     public boolean onTouch(View v, MotionEvent event) {
         mLastMotionEvent = event;
         if (!mIsPeeking) {
-            mComputedPressureThreshold =
-                    getComputedPressureThreshold(event.getPressure(), mSensibility);
+            mComputedPressureThreshold = getComputedPressureThreshold(event.getPressure(), mSensibility);
+            mComputedSurfaceThreshold = getComputedPressureThreshold(event.getSize(), mSensibility);
         } else {
             mPeekHandler.removeCallbacks(mPeekRunnable);
-            if (event.getPressure() >= mComputedPressureThreshold) {
+            if (event.getPressure() >= mComputedPressureThreshold ||
+                event.getSize() >= mComputedSurfaceThreshold) {
                 mIsPeeking = false;
                 destroyPopup();
 
