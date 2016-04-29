@@ -60,18 +60,19 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     private final Runnable mPeekRunnable = new Runnable() {
         @Override
         public void run() {
-            if (!mIsPeeking &&
-                    (mLastMotionEvent.getPressure() <= mComputedPressureThreshold ||
-                     mLastMotionEvent.getSize() <= mComputedSurfaceThreshold)) {
-                mIsPeeking = true;
-                if (mPopupContainer != null) {
-                    mPopup = LayoutInflater.from(mView.getContext())
-                            .inflate(mPopupLayoutRes, mPopupContainer);
-                    mPopup.setVisibility(View.INVISIBLE);
+            if (!mIsPeeking) {
+                if (mLastMotionEvent.getPressure() <= mComputedPressureThreshold ||
+                        mLastMotionEvent.getSize() <= mComputedSurfaceThreshold) {
+                    mIsPeeking = true;
+                    if (mPopupContainer != null) {
+                        mPopup = LayoutInflater.from(mView.getContext())
+                                .inflate(mPopupLayoutRes, mPopupContainer);
+                        mPopup.setVisibility(View.INVISIBLE);
 
-                    handlePopupVisibility(true);
+                        handlePopupVisibility(true);
+                    }
+                    mListener.onPeek(mPopup, mView, mLastMotionEvent);
                 }
-                mListener.onPeek(mPopup, mView, mLastMotionEvent);
             }
         }
     };
