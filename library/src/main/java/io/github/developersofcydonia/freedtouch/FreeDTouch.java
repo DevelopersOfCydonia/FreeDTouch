@@ -18,6 +18,7 @@
 package io.github.developersofcydonia.freedtouch;
 
 import android.os.Handler;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
@@ -78,17 +79,19 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     };
 
     /**
-     * @param view
-     * @param listener
+     * Get the default FreeDTouch Instance with the default Sensibility (Sensibility.LOW).
+     * @param view  The View that will trigger the FreeDTouchListener
+     * @param listener The FreeDTouch Listener
      */
     public static FreeDTouch setup(View view, OnForceTouchListener listener) {
         return new FreeDTouch(view, listener, Sensibility.LOW);
     }
 
     /**
-     * @param view
-     * @param listener
-     * @param sensibility
+     * Get the default FreeDTouch Instance with a custom Sensibility Value.
+     * @param view  The View that will trigger the FreeDTouchListener
+     * @param listener The FreeDTouch Listener
+     * @param sensibility Sensibility Value(Sensibility.LOW, Sensibility.MEDIUM, Sensibility.HIGH)
      */
     public static FreeDTouch setup(View view, OnForceTouchListener listener, int sensibility) {
         return new FreeDTouch(view, listener, sensibility);
@@ -104,6 +107,9 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
         mView = v;
     }
 
+    /**
+     * Method used to start listening for events.
+     */
     public void start() {
         if (mView == null) {
             throw new NullPointerException("View is null!");
@@ -114,7 +120,12 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
         mGestureDetector = new GestureDetectorCompat(mView.getContext(), this);
     }
 
-    public FreeDTouch addPopup(View popupContainer, int layout) {
+    /**
+     * Method used to add a custom pop-up to the FreeDTouch event.
+     * @param popupContainer The view that will contain the layout
+     * @param layout The pop-up layout
+     */
+    public FreeDTouch addPopup(View popupContainer, @LayoutRes int layout) {
         this.mPopupContainer = (ViewGroup) popupContainer;
         this.mPopupLayoutRes = layout;
 
