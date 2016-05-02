@@ -2,6 +2,13 @@
 A 3D Touch API for Android
 
 # How do I use it?
+build.gradle
+
+```
+compile 'io.github.developersofcydonia:freedtouch:1.0.0'
+```
+
+
 MainActivity.java
 
 ```java
@@ -75,4 +82,3 @@ In your activity_main.xml
     </FrameLayout>
 </RelativeLayout>
 ```
-
