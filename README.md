@@ -1,6 +1,8 @@
 # FreeDTouch
 A 3D Touch API for Android
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FreeDTouch-green.svg?style=true)](https://android-arsenal.com/details/1/3527)
+
 # How do I use it?
 build.gradle
 
