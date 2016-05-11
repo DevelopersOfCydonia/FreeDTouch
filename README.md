@@ -53,7 +53,7 @@ FreeDTouch.setup(button, onForceTouchListner)
         .start();
 ```
 
-In your activity_main.xml
+activity_main.xml
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -84,3 +84,26 @@ In your activity_main.xml
     </FrameLayout>
 </RelativeLayout>
 ```
+
+popup_example.xml
+
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="72dp"
+    android:background="#eee">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="#212121"
+        android:textSize="82sp"
+        android:gravity="center"
+        android:text="Hey!"/>
+
+</RelativeLayout>
+```
+
+
