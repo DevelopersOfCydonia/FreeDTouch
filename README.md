@@ -16,7 +16,7 @@ MainActivity.java
 ```java
 FreeDTouch.OnForceTouchListener onForceTouchListener = new FreeDTouch.OnForceTouchListener() {
     @Override
-    public void onPeek(View popup, View v, MotionEvent e) {
+    public void onPeek(View popup, View view, MotionEvent e) {
         Log.d(TAG, "onPeek");
         Toast.makeText(MainActivity.this, "PEEK", Toast.LENGTH_SHORT).show();
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
@@ -26,20 +26,20 @@ FreeDTouch.OnForceTouchListener onForceTouchListener = new FreeDTouch.OnForceTou
     }
     
     @Override
-    public void onPop(View popup, View v, MotionEvent e) {
+    public void onPop(View popup, View view, MotionEvent e) {
         Log.d(TAG, "onPop");
         Toast.makeText(MainActivity.this, "POP", Toast.LENGTH_SHORT).show();
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
     }
     
     @Override
-    public void onClick(View popup, View v, MotionEvent e) {
+    public void onClick(View popup, View view, MotionEvent e) {
         Log.d(TAG, "onClick");
         Toast.makeText(MainActivity.this, "Click", Toast.LENGTH_SHORT).show();
     }
     
     @Override
-    public void onCancel(View popup, View v, MotionEvent e) {
+    public void onCancel(View popup, View view, MotionEvent e) {
         Log.d(TAG, "onCancel");
         Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show();
     }
