@@ -3,6 +3,8 @@ A 3D Touch API for Android
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FreeDTouch-green.svg?style=true)](https://android-arsenal.com/details/1/3527)
 
+![alt tag](https://raw.githubusercontent.com/DevelopersOfCydonia/FreeDTouch/master/media/freedtouch.gif)
+
 # How do I use it?
 build.gradle
 
