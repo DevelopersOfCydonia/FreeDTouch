@@ -9,72 +9,110 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 
 import io.github.developersofcydonia.freedtouch.FreeDTouch;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getName();
+    /**
+     * Used for debug proposes
+     */
+    private static final String TAG = "FreeDTouch";
 
-    private static final int POPUP_LAYOUT_RES = R.layout.popup_example;
+    /**
+     * Set to false to disable logs
+     */
+    private static final boolean DEBUG = true;
 
+    /**
+     * The tag of the dialog
+     */
     private static final String DIALOG_TAG = "dialog";
 
+    /**
+     * The layout resource of the popup
+     */
+    private static final int POPUP_LAYOUT_RES = R.layout.popup_example;
 
-    Button mButton, mButtonFragment;
+    /**
+     * The Vibrator service
+     */
+    private Vibrator mVibrator;
 
-    private FreeDTouch.OnForceTouchListener onForceTouchListener = new FreeDTouch.OnForceTouchListener() {
+    /**
+     * UI Views
+     */
+    private View mButton;
+    private View mButtonFragment;
+    private View mPopupContainer;
+
+    private final FreeDTouch.OnForceTouchListener onForceTouchListener = new FreeDTouch.OnForceTouchListener() {
         @Override
-        public void onPeek(View popup, View v, MotionEvent e) {
-            Log.d(TAG, "onPeek");
-            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
-            if (mButtonFragment.equals(v)) {
+        public void onPeek(View popup, View view, MotionEvent e) {
+            log("onPeek");
+
+            mVibrator.vibrate(20);
+
+            if (mButtonFragment.equals(view)) {
                 new DialogTestFragment().show(getSupportFragmentManager(), DIALOG_TAG);
             }
         }
 
         @Override
-        public void onPop(View popup, View v, MotionEvent e) {
-            Log.d(TAG, "onPop");
-            ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(20);
-            onClick(popup, v, e);
+        public void onPop(View popup, View view, MotionEvent e) {
+            log("onPop");
+
+            mVibrator.vibrate(20);
+
+            onClick(popup, view, e);
+
             destroyDialog();
         }
 
         @Override
-        public void onClick(View popup, View v, MotionEvent e) {
-            Log.d(TAG, "onClick");
+        public void onClick(View popup, View view, MotionEvent e) {
+            log("onClick");
+
             startActivity(new Intent(MainActivity.this, PopActivity.class));
+            overridePendingTransition(0, 0);
         }
 
         @Override
-        public void onCancel(View popup, View v, MotionEvent e) {
-            Log.d(TAG, "onCancel");
+        public void onCancel(View popup, View view, MotionEvent e) {
+            log("onCancel");
+
             destroyDialog();
         }
     };
-
-    public void destroyDialog() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
-        if (fragment instanceof DialogFragment) {
-            ((DialogTestFragment) fragment).dismiss();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mButton = (Button) findViewById(R.id.button);
-        mButtonFragment = (Button) findViewById(R.id.button_fragment);
-        View popupContainer = findViewById(R.id.popup_container);
+        mVibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        mButton = findViewById(R.id.button);
+        mButtonFragment = findViewById(R.id.button_fragment);
+        mPopupContainer = findViewById(R.id.popup_container);
 
         FreeDTouch.setup(mButton, onForceTouchListener)
-                .addPopup(popupContainer, POPUP_LAYOUT_RES)
+                .addPopup(mPopupContainer, POPUP_LAYOUT_RES)
                 .start();
 
         FreeDTouch.setup(mButtonFragment, onForceTouchListener).start();
+    }
+
+    private void destroyDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if (fragment instanceof DialogFragment) {
+            ((DialogTestFragment) fragment).dismiss();
+        }
+    }
+
+    private void log(Object whatToLog) {
+        if (DEBUG) {
+            Log.d(TAG, " *** " + whatToLog);
+        }
     }
 }

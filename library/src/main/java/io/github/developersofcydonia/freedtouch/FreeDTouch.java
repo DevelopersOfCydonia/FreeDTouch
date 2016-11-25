@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2016 DevelopersOfCydonia 
  *
  *
@@ -32,8 +32,29 @@ import android.view.animation.AnimationUtils;
 
 public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestureListener {
 
-    private OnForceTouchListener mListener;
-    private View mView;
+    /**
+     * System long press threshold
+     */
+    private static final int LONG_PRESS_THRESHOLD = ViewConfiguration.getLongPressTimeout();
+
+    /**
+     * The listener
+     */
+    private final OnForceTouchListener mListener;
+
+    /**
+     * The View we're listening for the 3D Touch
+     */
+    private final View mView;
+
+    /**
+     * Sensibility of the pressure.
+     * Values can be:
+     *  - HIGH
+     *  - MEDIUM
+     *  - LOW
+     */
+    private final int mSensibility;
 
     /**
      * Wrap your layout in a RelativeLayout, then add a FrameLayout as the
@@ -45,18 +66,30 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     private View mPopup;
     private int mPopupLayoutRes;
 
+    /**
+     * A boolean to check if user is peeking
+     */
     private boolean mIsPeeking;
 
+    /**
+     * The last MotionEvent
+     */
     private MotionEvent mLastMotionEvent;
 
+    /**
+     * Hold pressure data
+     */
     private float mComputedSurfaceThreshold;
     private float mComputedPressureThreshold;
-    private int mSensibility;
 
+    /**
+     * The GestureDetector
+     */
     private GestureDetectorCompat mGestureDetector;
 
-    public static final int LONG_PRESS_THRESHOLD = ViewConfiguration.getLongPressTimeout();
-
+    /**
+     * Handle peek
+     */
     private final Handler mPeekHandler = new Handler();
     private final Runnable mPeekRunnable = new Runnable() {
         @Override
@@ -97,14 +130,14 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
         return new FreeDTouch(view, listener, sensibility);
     }
 
-    private FreeDTouch(View v, OnForceTouchListener listener) {
-        new FreeDTouch(v, listener, Sensibility.LOW);
+    private FreeDTouch(View view, OnForceTouchListener listener) {
+        this(view, listener, Sensibility.LOW);
     }
 
-    private FreeDTouch(View v, OnForceTouchListener listener, int sensibility) {
+    private FreeDTouch(View view, OnForceTouchListener listener, int sensibility) {
         mListener = listener != null ? listener : DUMMY_LISTENER;
         mSensibility = sensibility;
-        mView = v;
+        mView = view;
     }
 
     /**
@@ -199,7 +232,7 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
         }
     }
 
-    /*
+    /**
      * This dummy listener prevents future checks for listener being null.
      */
     private static final OnForceTouchListener DUMMY_LISTENER = new OnForceTouchListener() {
@@ -258,10 +291,10 @@ public class FreeDTouch implements View.OnTouchListener, GestureDetector.OnGestu
     }
 
     public interface OnForceTouchListener {
-        void onPeek(@Nullable View popup, View v, MotionEvent e);
-        void onPop(@Nullable View popup, View v, MotionEvent e);
-        void onClick(@Nullable View popup, View v, MotionEvent e);
-        void onCancel(@Nullable View popup, View v, MotionEvent e);
+        void onPeek(@Nullable View popup, View view, MotionEvent e);
+        void onPop(@Nullable View popup, View view, MotionEvent e);
+        void onClick(@Nullable View popup, View view, MotionEvent e);
+        void onCancel(@Nullable View popup, View view, MotionEvent e);
     }
 
     public class Sensibility {
